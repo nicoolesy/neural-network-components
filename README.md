@@ -1,10 +1,6 @@
 # Understanding Neural Networks: A Visual Guide
 
 > A hands-on exploration of how neural networks work, built using the TensorFlow Neural Network Playground.
-
-**Author:** Your Name  
-**Course:** [Course Name]  
-**Date:** May 2026  
 **Tool:** [TensorFlow Neural Network Playground](https://playground.tensorflow.org/)
 
 ---
