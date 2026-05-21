@@ -195,17 +195,17 @@ This cycle repeats once per **epoch** (visible in the Playground's epoch counter
 
 Neural networks are often described as "black boxes," but visualizing their structure in tools like the Playground makes them dramatically more understandable. Key insights from this exercise:
 
-🔹 **Structure is simpler than it sounds.** A neural network is just neurons organized into layers, connected by weights — repeated as needed.
+ **Structure is simpler than it sounds.** A neural network is just neurons organized into layers, connected by weights (repeated as needed).
 
-🔹 **Learning is weight adjustment.** The mystery of "how AI learns" reduces to a clear process: measure error, nudge weights, repeat.
+ **Learning is weight adjustment.** The mystery of "how AI learns" reduces to a clear process: measure error, nudge weights, repeat.
 
-🔹 **Non-linearity is everything.** Without activation functions, depth is meaningless. This was the single most important thing I learned from the Playground.
+ **Non-linearity is everything.** Without activation functions, depth is meaningless. This was the single most important thing I learned from the Playground.
 
-🔹 **Hyperparameters matter as much as architecture.** Learning rate, activation choice, and noise level affected training outcomes as much as the number of layers.
+ **Hyperparameters matter as much as architecture.** Learning rate, activation choice, and noise level affected training outcomes as much as the number of layers.
 
-🔹 **Visualization beats explanation.** Watching decision boundaries form in real time turned textbook definitions into genuine intuition. Reading "the network learns weights" is abstract; seeing the lines between neurons thicken and change color as training runs is concrete.
+ **Visualization beats explanation.** Watching decision boundaries form in real time turned textbook definitions into genuine intuition. Reading "the network learns weights" is abstract; seeing the lines between neurons thicken and change color as training runs is concrete.
 
-These foundations underpin every modern AI system, including the word embeddings explored in my previous artifact — which are themselves the learned weights of a neural network's hidden layer.
+These foundations underpin every modern AI system, including the word embeddings explored in my previous artifact, which are themselves the learned weights of a neural network's hidden layer.
 
 ---
 
@@ -217,4 +217,4 @@ These foundations underpin every modern AI system, including the word embeddings
 
 ---
 
-*This artifact was created as part of [Course Name] at Indiana Wesleyan University.*
+*This artifact was created as part of Model Development at Indiana Wesleyan University.*
