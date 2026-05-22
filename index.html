@@ -747,7 +747,7 @@
         </div>
       </div>
       <div class="exp-body">
-        <img src="playground-experiment1-spiral-sweetspot.png" alt="Spiral solved" class="shot" onerror="this.outerHTML='<div class=img-placeholder>Upload: images / playground-experiment1-spiral-sweetspot.png</div>'">
+        <img src="playground-experiment1-spiral-sweetspot.png" alt="Spiral solved" class="shot" onerror="this.outerHTML='<div class=img-placeholder>Upload: playground-experiment1-spiral-sweetspot.png</div>'">
         <p class="exp-narrative">I started with 2 hidden layers (4 + 2 neurons) on the spiral dataset. After training for over <strong>8,000 epochs</strong>, the loss plateaued at 0.24 — far from solving the problem. The 2-neuron second layer was a bottleneck: even when the first layer learned useful features, the network couldn't carry enough of them forward. After widening to <strong>8 + 6 neurons</strong>, the loss dropped to <strong>0.034 in just 1,342 epochs</strong> — over 6× faster — and the decision boundary cleanly wrapped both spiral arms.</p>
         <div class="metrics">
           <div class="metric good"><div class="metric-lbl">Training Loss</div><div class="metric-val">0.034</div></div>
@@ -774,7 +774,7 @@
         </div>
       </div>
       <div class="exp-body">
-        <img src="playground-experiment2-linear-fail.png" alt="Linear activation fails" class="shot" onerror="this.outerHTML='<div class=img-placeholder>Upload: images / playground-experiment2-linear-fail.png</div>'">
+        <img src="playground-experiment2-linear-fail.png" alt="Linear activation fails" class="shot" onerror="this.outerHTML='<div class=img-placeholder>Upload: playground-experiment2-linear-fail.png</div>'">
         <p class="exp-narrative">Switching from Tanh to Linear caused catastrophic failure. The decision boundary collapsed from a curling spiral into a simple diagonal gradient — essentially a single tilted line. The reason: <strong>a linear function of a linear function is still linear</strong>. Stacking linear activations collapses the entire network into a single linear equation. A 14-neuron, 2-layer linear network has the same expressive power as a single neuron with no hidden layers.</p>
         <div class="metrics">
           <div class="metric bad"><div class="metric-lbl">Training Loss</div><div class="metric-val">0.463</div></div>
