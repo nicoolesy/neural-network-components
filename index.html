@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Visual Field Guide to Neural Networks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: #f0ebe1;
+    color: #1a1a1a;
+    line-height: 1.6;
+    font-size: 17px;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.08) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+  :root {
+    --bg: #f0ebe1;
+    --bg-card: #eae4d6;
+    --ink: #1a1a1a;
+    --ink-soft: #555;
+    --ink-faint: #8a8475;
+    --rule: #1a1a1a;
+    --accent-red: #c44536;
+    --accent-blue: #3b5b9c;
+    --accent-orange: #c46a3a;
+    --accent-purple: #7e5aa3;
+    --accent-yellow: #c49c3a;
+    --accent-green: #2d7a4a;
+  }
+  .mono {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .mono-faint { color: var(--ink-faint); }
+  em.accent {
+    font-style: italic;
+    color: var(--accent-red);
+    font-weight: 600;
+  }
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 60px;
+  }
+  @media (max-width: 768px) {
+    .container { padding: 0 24px; }
+    body { font-size: 16px; }
+  }
+  .topbar {
+    padding: 32px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .topbar .left, .topbar .right { display: flex; gap: 16px; }
+  .topbar .divider { color: var(--ink-faint); }
+  .hero {
+    padding: 60px 0 40px;
+  }
+  .hero h1 {
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    line-height: 0.95;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 36px;
+    max-width: 18ch;
+  }
+  .hero .deck {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-style: italic;
+    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+    color: var(--ink-soft);
+    max-width: 60ch;
+    line-height: 1.5;
+    margin-bottom: 40px;
+    font-weight: 400;
+  }
+  .hero .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 36px;
+  }
+  .hero .stats .stat {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+  .hero .stats .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+  .hero .stats .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    font-weight: 500;
+  }
+  hr.rule {
+    border: 0;
+    border-top: 1px solid var(--rule);
+    margin: 0;
+  }
+  .legend-bar {
+    background: var(--bg-card);
+    padding: 32px 36px;
+    margin: 40px 0 80px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 48px;
+  }
+  @media (max-width: 768px) {
+    .legend-bar { grid-template-columns: 1fr; gap: 24px; padding: 24px; }
+  }
+  .legend-group .lhead {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  .legend-group .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(0,0,0,0.08);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .pill .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .dot.red { background: var(--accent-red); }
+  .dot.blue { background: var(--accent-blue); }
+  .dot.orange { background: var(--accent-orange); }
+  .dot.purple { background: var(--accent-purple); }
+  .dot.yellow { background: var(--accent-yellow); }
+  .dot.green { background: var(--accent-green); }
+  section { padding: 60px 0; }
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 60px;
+    margin-bottom: 40px;
+    align-items: start;
+  }
+  @media (max-width: 768px) {
+    .section-head { grid-template-columns: 1fr; gap: 16px; }
+  }
+  .section-head .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-faint);
+    font-weight: 500;
+    padding-top: 12px;
+  }
+  .section-head h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    max-width: 22ch;
+  }
+  .section-head .lede {
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 1.1rem;
+    max-width: 60ch;
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+  .arch-wrap {
+    background: var(--bg-card);
+    padding: 50px 40px;
+    margin-top: 40px;
+  }
+  .arch-wrap svg { width: 100%; height: auto; display: block; max-width: 900px; margin: 0 auto; }
+  .arch-caption {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    margin-top: 24px;
+  }
+  .components {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    border-left: 1px solid var(--rule);
+  }
+  @media (max-width: 768px) { .components { grid-template-columns: 1fr; } }
+  .comp {
+    padding: 32px;
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .comp-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .comp-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--ink-faint);
+    font-weight: 500;
+  }
+  .comp-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  .comp-desc { color: var(--ink); font-size: 1rem; line-height: 1.55; }
+  .comp-note {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(0,0,0,0.15);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    font-weight: 500;
+  }
+  .comp-note strong { color: var(--ink); font-weight: 600; }
+  .experiment {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 60px;
+    padding: 60px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  @media (max-width: 900px) {
+    .experiment { grid-template-columns: 1fr; gap: 30px; }
+  }
+  .exp-meta { display: flex; flex-direction: column; gap: 18px; }
+  .exp-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+  .exp-title {
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+  }
+  .exp-setup {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    line-height: 1.8;
+    padding: 14px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .exp-setup strong { color: var(--ink); font-weight: 600; }
+  .exp-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .exp-body img.shot {
+    width: 100%;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    display: block;
+    margin-bottom: 24px;
+  }
+  .img-placeholder {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: var(--bg-card);
+    border: 1px dashed var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-faint);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+    padding: 20px;
+    text-align: center;
+  }
+  .exp-narrative {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin-bottom: 28px;
+    color: var(--ink);
+  }
+  .exp-narrative strong { font-weight: 600; }
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    border-top: 1px solid var(--rule);
+    border-left: 1px solid var(--rule);
+    margin-bottom: 28px;
+  }
+  .metric {
+    padding: 18px 20px;
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    background: var(--bg);
+  }
+  .metric-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .metric-val {
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .metric.good { background: rgba(45,122,74,0.08); }
+  .metric.good .metric-val { color: var(--accent-green); }
+  .metric.bad { background: rgba(196,69,54,0.08); }
+  .metric.bad .metric-val { color: var(--accent-red); }
+  .takeaway {
+    padding: 24px 28px;
+    background: var(--bg-card);
+    border-left: 3px solid var(--accent-red);
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .takeaway strong {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--accent-red);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    display: block;
+    margin-bottom: 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .three-up {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    border-left: 1px solid var(--rule);
+    margin-bottom: 28px;
+  }
+  @media (max-width: 900px) { .three-up { grid-template-columns: 1fr; } }
+  .three-cell {
+    padding: 24px;
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    background: var(--bg);
+  }
+  .three-cell h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .three-cell .img-placeholder { aspect-ratio: 4/3; font-size: 0.65rem; }
+  .three-cell .shot {
+    width: 100%;
+    border: 1px solid var(--rule);
+    margin-bottom: 14px;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+  }
+  .three-cell p {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .three-cell p strong { color: var(--ink); }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    border: 1px solid;
+  }
+  .tag.fail { color: var(--accent-red); border-color: var(--accent-red); }
+  .tag.ok   { color: var(--accent-yellow); border-color: var(--accent-yellow); }
+  .tag.win  { color: var(--accent-green); border-color: var(--accent-green); }
+  .loop {
+    background: var(--bg-card);
+    padding: 50px 40px;
+    margin-top: 40px;
+  }
+  .loop svg { width: 100%; max-width: 760px; margin: 0 auto; display: block; height: auto; }
+  .insights {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    border-left: 1px solid var(--rule);
+    margin-top: 40px;
+  }
+  @media (max-width: 900px) { .insights { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 500px) { .insights { grid-template-columns: 1fr; } }
+  .insight {
+    padding: 32px;
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    background: var(--bg);
+  }
+  .insight-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.12em;
+    margin-bottom: 14px;
+  }
+  .insight-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .insight-title em {
+    color: var(--accent-red);
+    font-style: italic;
+  }
+  .insight p {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  footer {
+    padding: 60px 0 40px;
+    border-top: 1px solid var(--rule);
+    margin-top: 40px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 40px;
+  }
+  @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 24px; } }
+  .footer-grid h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  .footer-grid p, .footer-grid a {
+    color: var(--ink);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    display: block;
+    text-decoration: none;
+  }
+  .footer-grid a:hover { color: var(--accent-red); }
+  .colophon {
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="topbar">
+    <div class="left">
+      <span class="mono">Portfolio Artifact</span>
+      <span class="mono mono-faint">/</span>
+      <span class="mono">Neural Networks</span>
+    </div>
+    <div class="right">
+      <span class="mono">Vol. 02</span>
+      <span class="mono mono-faint">—</span>
+      <span class="mono">2026</span>
+    </div>
+  </div>
+
+  <header class="hero">
+    <h1>A Visual Field Guide to <em class="accent">Neural Networks</em></h1>
+    <p class="deck">Six core components — defined, illustrated, and stress-tested through three controlled experiments in the TensorFlow Playground.</p>
+    <div class="stats">
+      <div class="stat"><span class="num">6</span><span class="lbl">Components</span></div>
+      <div class="stat"><span class="num">3</span><span class="lbl">Experiments</span></div>
+      <div class="stat"><span class="num">5</span><span class="lbl">Screenshots</span></div>
+      <div class="stat"><span class="num">2</span><span class="lbl">Activations</span></div>
+      <div class="stat"><span class="num">01</span><span class="lbl">Architecture</span></div>
+    </div>
+  </header>
+
+  <hr class="rule">
+
+  <div class="legend-bar">
+    <div class="legend-group">
+      <div class="lhead">Component Type</div>
+      <div class="pills">
+        <span class="pill"><span class="dot red"></span>Structure</span>
+        <span class="pill"><span class="dot blue"></span>Computation</span>
+      </div>
+    </div>
+    <div class="legend-group">
+      <div class="lhead">Training Element</div>
+      <div class="pills">
+        <span class="pill"><span class="dot orange"></span>Weights</span>
+        <span class="pill"><span class="dot purple"></span>Activation</span>
+        <span class="pill"><span class="dot yellow"></span>Loss</span>
+        <span class="pill"><span class="dot green"></span>Optimizer</span>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-head">
+      <div class="label">§ 01 — Architecture</div>
+      <div>
+        <h2>How data <em class="accent">flows</em> through the network.</h2>
+        <p class="lede">Inputs enter on the left, transform through hidden layers, and produce a single prediction on the right. Every arrow carries a weight; every circle holds a calculation.</p>
+      </div>
+    </div>
+
+    <div class="arch-wrap">
+      <svg viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg">
+        <g font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.5" fill="#8a8475">
+          <text x="100" y="30" text-anchor="middle">INPUT</text>
+          <text x="320" y="30" text-anchor="middle">HIDDEN 01</text>
+          <text x="540" y="30" text-anchor="middle">HIDDEN 02</text>
+          <text x="730" y="30" text-anchor="middle">OUTPUT</text>
+        </g>
+        <g stroke="#1a1a1a" stroke-width="0.6" opacity="0.35" fill="none">
+          <line x1="100" y1="140" x2="320" y2="80"/>
+          <line x1="100" y1="140" x2="320" y2="170"/>
+          <line x1="100" y1="140" x2="320" y2="260"/>
+          <line x1="100" y1="140" x2="320" y2="340"/>
+          <line x1="100" y1="240" x2="320" y2="80"/>
+          <line x1="100" y1="240" x2="320" y2="170"/>
+          <line x1="100" y1="240" x2="320" y2="260"/>
+          <line x1="100" y1="240" x2="320" y2="340"/>
+        </g>
+        <g stroke="#1a1a1a" stroke-width="0.6" opacity="0.35" fill="none">
+          <line x1="320" y1="80"  x2="540" y2="130"/>
+          <line x1="320" y1="80"  x2="540" y2="210"/>
+          <line x1="320" y1="80"  x2="540" y2="290"/>
+          <line x1="320" y1="170" x2="540" y2="130"/>
+          <line x1="320" y1="170" x2="540" y2="210"/>
+          <line x1="320" y1="170" x2="540" y2="290"/>
+          <line x1="320" y1="260" x2="540" y2="130"/>
+          <line x1="320" y1="260" x2="540" y2="210"/>
+          <line x1="320" y1="260" x2="540" y2="290"/>
+          <line x1="320" y1="340" x2="540" y2="130"/>
+          <line x1="320" y1="340" x2="540" y2="210"/>
+          <line x1="320" y1="340" x2="540" y2="290"/>
+        </g>
+        <g stroke="#1a1a1a" stroke-width="0.6" opacity="0.35" fill="none">
+          <line x1="540" y1="130" x2="730" y2="200"/>
+          <line x1="540" y1="210" x2="730" y2="200"/>
+          <line x1="540" y1="290" x2="730" y2="200"/>
+        </g>
+        <g>
+          <circle cx="100" cy="140" r="22" fill="#f0ebe1" stroke="#1a1a1a" stroke-width="1.5"/>
+          <text x="100" y="146" text-anchor="middle" font-family="Source Serif 4, serif" font-style="italic" font-size="16" fill="#1a1a1a">x₁</text>
+          <circle cx="100" cy="240" r="22" fill="#f0ebe1" stroke="#1a1a1a" stroke-width="1.5"/>
+          <text x="100" y="246" text-anchor="middle" font-family="Source Serif 4, serif" font-style="italic" font-size="16" fill="#1a1a1a">x₂</text>
+        </g>
+        <g>
+          <circle cx="320" cy="80"  r="18" fill="#c44536" opacity="0.85"/>
+          <circle cx="320" cy="170" r="18" fill="#c44536" opacity="0.85"/>
+          <circle cx="320" cy="260" r="18" fill="#c44536" opacity="0.85"/>
+          <circle cx="320" cy="340" r="18" fill="#c44536" opacity="0.85"/>
+        </g>
+        <g>
+          <circle cx="540" cy="130" r="18" fill="#3b5b9c" opacity="0.85"/>
+          <circle cx="540" cy="210" r="18" fill="#3b5b9c" opacity="0.85"/>
+          <circle cx="540" cy="290" r="18" fill="#3b5b9c" opacity="0.85"/>
+        </g>
+        <circle cx="730" cy="200" r="22" fill="#f0ebe1" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="730" y="206" text-anchor="middle" font-family="Source Serif 4, serif" font-style="italic" font-size="16" fill="#1a1a1a">ŷ</text>
+      </svg>
+      <div class="arch-caption">Fig. 01 — A feed-forward network with two hidden layers</div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <div class="section-head">
+      <div class="label">§ 02 — The Six Components</div>
+      <div>
+        <h2>Every network — from MNIST to GPT — is built from <em class="accent">these six elements</em>.</h2>
+        <p class="lede">Three describe structure, three describe how it learns. Master the vocabulary and the rest becomes legible.</p>
+      </div>
+    </div>
+
+    <div class="components">
+
+      <article class="comp">
+        <div class="comp-head">
+          <span class="comp-num">№ 01</span>
+          <span class="pill"><span class="dot red"></span>Structure</span>
+        </div>
+        <h3 class="comp-name">Layers</h3>
+        <p class="comp-desc">Stacked groups of neurons that process data sequentially. Three types: <em>input</em> receives data, <em>hidden</em> transforms it, <em>output</em> produces predictions. Depth = number of hidden layers.</p>
+        <p class="comp-note"><strong>In the Playground:</strong> + / − buttons above the network add or remove hidden layers.</p>
+      </article>
+
+      <article class="comp">
+        <div class="comp-head">
+          <span class="comp-num">№ 02</span>
+          <span class="pill"><span class="dot blue"></span>Computation</span>
+        </div>
+        <h3 class="comp-name">Neurons</h3>
+        <p class="comp-desc">The basic computational unit. Each neuron multiplies inputs by weights, sums them with a bias, and runs the result through an activation function. Thousands together produce intelligence.</p>
+        <p class="comp-note"><strong>Formula:</strong> output = activation(w₁·x₁ + … + bias)</p>
+      </article>
+
+      <article class="comp">
+        <div class="comp-head">
+          <span class="comp-num">№ 03</span>
+          <span class="pill"><span class="dot orange"></span>Weights</span>
+        </div>
+        <h3 class="comp-name">Weights</h3>
+        <p class="comp-desc">Numerical values that determine how strongly each input influences a neuron's output. Training is the process of adjusting weights. <em>The network's knowledge lives in its weights.</em></p>
+        <p class="comp-note"><strong>In the Playground:</strong> Line thickness = magnitude. Blue = positive, orange = negative.</p>
+      </article>
+
+      <article class="comp">
+        <div class="comp-head">
+          <span class="comp-num">№ 04</span>
+          <span class="pill"><span class="dot purple"></span>Activation</span>
+        </div>
+        <h3 class="comp-name">Activation Functions</h3>
+        <p class="comp-desc">Mathematical functions that introduce <em>non-linearity</em>, letting networks learn curves rather than just straight lines. Without them, depth is meaningless. Common: ReLU, Tanh, Sigmoid.</p>
+        <p class="comp-note"><strong>In the Playground:</strong> "Activation" dropdown in the top bar.</p>
+      </article>
+
+      <article class="comp">
+        <div class="comp-head">
+          <span class="comp-num">№ 05</span>
+          <span class="pill"><span class="dot yellow"></span>Loss</span>
+        </div>
+        <h3 class="comp-name">Loss Functions</h3>
+        <p class="comp-desc">A measurement of how wrong the network's predictions currently are. Lower = better. Common: Mean Squared Error (regression), Cross-Entropy (classification). The network's report card.</p>
+        <p class="comp-note"><strong>In the Playground:</strong> "Training loss" and "Test loss" in the top-right.</p>
+      </article>
+
+      <article class="comp">
+        <div class="comp-head">
+          <span class="comp-num">№ 06</span>
+          <span class="pill"><span class="dot green"></span>Optimizer</span>
+        </div>
+        <h3 class="comp-name">Optimization Algorithms</h3>
+        <p class="comp-desc">Procedures that adjust weights to reduce the loss. The classic: <em>gradient descent</em> — calculate direction, take a step, repeat. Modern variants: Adam, SGD, RMSprop.</p>
+        <p class="comp-note"><strong>In the Playground:</strong> "Learning rate" dropdown controls step size.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <div class="section-head">
+      <div class="label">§ 03 — Hands-on Evidence</div>
+      <div>
+        <h2>Three controlled experiments, three <em class="accent">unmistakable lessons</em>.</h2>
+        <p class="lede">Each experiment changes one variable and holds everything else constant. The differences are dramatic.</p>
+      </div>
+    </div>
+
+    <article class="experiment">
+      <div class="exp-meta">
+        <span class="exp-number">Experiment № 01</span>
+        <h3 class="exp-title">Capacity — why network <em class="accent">size</em> matters.</h3>
+        <div class="exp-pills">
+          <span class="pill"><span class="dot red"></span>Structure</span>
+          <span class="pill"><span class="dot blue"></span>Computation</span>
+        </div>
+        <div class="exp-setup">
+          <strong>Dataset</strong> Spiral · <strong>Activation</strong> Tanh<br>
+          <strong>Layers</strong> 2 hidden (8 + 6 neurons)<br>
+          <strong>Learning Rate</strong> 0.03
+        </div>
+      </div>
+      <div class="exp-body">
+        <img src="images/playground-experiment1-spiral-sweetspot.png" alt="Spiral solved" class="shot" onerror="this.outerHTML='<div class=img-placeholder>Upload: images / playground-experiment1-spiral-sweetspot.png</div>'">
+        <p class="exp-narrative">I started with 2 hidden layers (4 + 2 neurons) on the spiral dataset. After training for over <strong>8,000 epochs</strong>, the loss plateaued at 0.24 — far from solving the problem. The 2-neuron second layer was a bottleneck: even when the first layer learned useful features, the network couldn't carry enough of them forward. After widening to <strong>8 + 6 neurons</strong>, the loss dropped to <strong>0.034 in just 1,342 epochs</strong> — over 6× faster — and the decision boundary cleanly wrapped both spiral arms.</p>
+        <div class="metrics">
+          <div class="metric good"><div class="metric-lbl">Training Loss</div><div class="metric-val">0.034</div></div>
+          <div class="metric good"><div class="metric-lbl">Test Loss</div><div class="metric-val">0.042</div></div>
+          <div class="metric"><div class="metric-lbl">Epochs</div><div class="metric-val">1,342</div></div>
+        </div>
+        <div class="takeaway">
+          <strong>Takeaway</strong>
+          Network capacity, not training time, was the limiting factor. Adding neurons let the network detect more features in parallel, giving the second layer enough information to compose them into the spiral shape. This is <em>compositional learning</em> in action.
+        </div>
+      </div>
+    </article>
+
+    <article class="experiment">
+      <div class="exp-meta">
+        <span class="exp-number">Experiment № 02</span>
+        <h3 class="exp-title">Activation — why <em class="accent">non-linearity</em> is everything.</h3>
+        <div class="exp-pills">
+          <span class="pill"><span class="dot purple"></span>Activation</span>
+        </div>
+        <div class="exp-setup">
+          <strong>Same as № 01</strong>, with one change:<br>
+          <strong>Linear</strong> activation instead of Tanh.
+        </div>
+      </div>
+      <div class="exp-body">
+        <img src="images/playground-experiment2-linear-fail.png" alt="Linear activation fails" class="shot" onerror="this.outerHTML='<div class=img-placeholder>Upload: images / playground-experiment2-linear-fail.png</div>'">
+        <p class="exp-narrative">Switching from Tanh to Linear caused catastrophic failure. The decision boundary collapsed from a curling spiral into a simple diagonal gradient — essentially a single tilted line. The reason: <strong>a linear function of a linear function is still linear</strong>. Stacking linear activations collapses the entire network into a single linear equation. A 14-neuron, 2-layer linear network has the same expressive power as a single neuron with no hidden layers.</p>
+        <div class="metrics">
+          <div class="metric bad"><div class="metric-lbl">Training Loss</div><div class="metric-val">0.463</div></div>
+          <div class="metric bad"><div class="metric-lbl">Test Loss</div><div class="metric-val">0.480</div></div>
+          <div class="metric"><div class="metric-lbl">Result</div><div class="metric-val" style="font-size:1.1rem;line-height:1.6">≈ Random</div></div>
+        </div>
+        <div class="takeaway">
+          <strong>Takeaway</strong>
+          Non-linearity is not optional. Activation functions are what give neural networks their power to learn curved patterns. Without them, depth becomes meaningless — and a network can only ever draw straight lines.
+        </div>
+      </div>
+    </article>
+
+    <article class="experiment" style="border-bottom: none;">
+      <div class="exp-meta">
+        <span class="exp-number">Experiment № 03</span>
+        <h3 class="exp-title">Learning Rate — the <em class="accent">Goldilocks</em> problem.</h3>
+        <div class="exp-pills">
+          <span class="pill"><span class="dot green"></span>Optimizer</span>
+        </div>
+        <div class="exp-setup">
+          <strong>Dataset</strong> Circle · <strong>Activation</strong> ReLU<br>
+          <strong>Layers</strong> 2 hidden (4 + 2 neurons)<br>
+          <strong>Variable</strong> Learning rate — three values
+        </div>
+      </div>
+      <div class="exp-body">
+        <p class="exp-narrative">The learning rate controls how big each weight adjustment is. I tested three values on the same simple dataset to find the Goldilocks zone — and discovered that <em>bigger steps aren't always faster</em>.</p>
+        <div class="three-up">
+          <div class="three-cell">
+            <h4>LR 3 <span class="tag fail">Too high</span></h4>
+            <img src="images/playground-experiment3-lr-too-high.png" alt="LR 3 chaos" class="shot" onerror="this.outerHTML='<div class=img-placeholder>Upload<br>lr-too-high.png</div>'">
+            <p><strong>Loss:</strong> 0.500 (random)<br><strong>Curve:</strong> Jagged chaos.<br>Optimizer overshoots every step.</p>
+          </div>
+          <div class="three-cell">
+            <h4>LR 0.3 <span class="tag ok">Aggressive</span></h4>
+            <img src="images/playground-experiment3-lr-aggressive.png" alt="LR 0.3 success" class="shot" onerror="this.outerHTML='<div class=img-placeholder>Upload<br>lr-aggressive.png</div>'">
+            <p><strong>Loss:</strong> 0.000 ✓<br><strong>Epochs:</strong> 285<br>Works, but bounces near the minimum.</p>
+          </div>
+          <div class="three-cell">
+            <h4>LR 0.03 <span class="tag win">Optimal</span></h4>
+            <img src="images/playground-experiment3-lr-default.png" alt="LR 0.03 fastest" class="shot" onerror="this.outerHTML='<div class=img-placeholder>Upload<br>lr-default.png</div>'">
+            <p><strong>Loss:</strong> 0.003 ✓<br><strong>Epochs:</strong> 130<br>Smaller, precise steps converge fastest.</p>
+          </div>
+        </div>
+        <div class="takeaway">
+          <strong>Takeaway</strong>
+          Bigger steps aren't always faster. Too high causes chaos; too low causes slow training. Surprisingly, the smallest learning rate <em>converged fastest</em> — because the optimizer settled cleanly without overshooting. Hyperparameter tuning is one of the most important parts of training.
+        </div>
+      </div>
+    </article>
+
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <div class="section-head">
+      <div class="label">§ 04 — Putting It Together</div>
+      <div>
+        <h2>The <em class="accent">training loop</em>.</h2>
+        <p class="lede">All six components work together in a cycle that repeats thousands of times. Below: one full pass.</p>
+      </div>
+    </div>
+
+    <div class="loop">
+      <svg viewBox="0 0 760 440" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#1a1a1a"/>
+          </marker>
+        </defs>
+        <g font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1" font-weight="500">
+          <rect x="280" y="20" width="200" height="60" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+          <text x="380" y="42" text-anchor="middle" fill="#8a8475" font-size="9">№ 01</text>
+          <text x="380" y="62" text-anchor="middle" fill="#1a1a1a" font-family="Source Serif 4, serif" font-size="15" font-weight="600">Input Data</text>
+
+          <rect x="530" y="130" width="200" height="60" fill="#c44536" stroke="#c44536"/>
+          <text x="630" y="152" text-anchor="middle" fill="#fed7aa" font-size="9">№ 02</text>
+          <text x="630" y="172" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="15" font-weight="600">Forward Pass</text>
+
+          <rect x="530" y="250" width="200" height="60" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+          <text x="630" y="272" text-anchor="middle" fill="#8a8475" font-size="9">№ 03</text>
+          <text x="630" y="292" text-anchor="middle" fill="#1a1a1a" font-family="Source Serif 4, serif" font-size="15" font-weight="600">Prediction</text>
+
+          <rect x="280" y="360" width="200" height="60" fill="#c49c3a" stroke="#c49c3a"/>
+          <text x="380" y="382" text-anchor="middle" fill="#fff8e0" font-size="9">№ 04</text>
+          <text x="380" y="402" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="15" font-weight="600">Loss Function</text>
+
+          <rect x="30" y="250" width="200" height="60" fill="#2d7a4a" stroke="#2d7a4a"/>
+          <text x="130" y="272" text-anchor="middle" fill="#d4f0dd" font-size="9">№ 05</text>
+          <text x="130" y="292" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="15" font-weight="600">Optimizer</text>
+
+          <rect x="30" y="130" width="200" height="60" fill="#c46a3a" stroke="#c46a3a"/>
+          <text x="130" y="152" text-anchor="middle" fill="#fed7aa" font-size="9">№ 06</text>
+          <text x="130" y="172" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="15" font-weight="600">Weights Updated</text>
+        </g>
+        <g stroke="#1a1a1a" stroke-width="1.2" fill="none" marker-end="url(#ar)">
+          <path d="M 480,60 Q 560,90 575,125"/>
+          <path d="M 630,190 L 630,245"/>
+          <path d="M 575,315 Q 560,350 480,378"/>
+          <path d="M 280,390 Q 190,365 175,315"/>
+          <path d="M 130,245 L 130,195"/>
+          <path d="M 175,125 Q 210,90 275,60"/>
+        </g>
+      </svg>
+      <div class="arch-caption" style="margin-top:30px;">Fig. 02 — One full training iteration · repeat thousands of times</div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <div class="section-head">
+      <div class="label">§ 05 — Summary</div>
+      <div>
+        <h2>Four <em class="accent">key insights</em> from the Playground.</h2>
+        <p class="lede">What visualizing neural networks reveals about how AI actually works.</p>
+      </div>
+    </div>
+
+    <div class="insights">
+      <article class="insight">
+        <div class="insight-num">№ 01</div>
+        <h3 class="insight-title">Structure is <em>simple</em>.</h3>
+        <p>A neural network is just neurons organized into layers, connected by weights — repeated as needed.</p>
+      </article>
+      <article class="insight">
+        <div class="insight-num">№ 02</div>
+        <h3 class="insight-title">Learning is <em>weight adjustment</em>.</h3>
+        <p>The mystery of "how AI learns" reduces to: measure error, nudge weights, repeat.</p>
+      </article>
+      <article class="insight">
+        <div class="insight-num">№ 03</div>
+        <h3 class="insight-title">Non-linearity is <em>everything</em>.</h3>
+        <p>Without activation functions, depth is meaningless. The biggest single insight from the Playground.</p>
+      </article>
+      <article class="insight">
+        <div class="insight-num">№ 04</div>
+        <h3 class="insight-title">Hyperparameters <em>matter</em>.</h3>
+        <p>Even a perfect architecture is ruined by the wrong learning rate. Tuning is half the work.</p>
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <h4>About this Artifact</h4>
+        <p>A visual field guide built to demonstrate understanding of neural network fundamentals through controlled experimentation in the TensorFlow Playground.</p>
+      </div>
+      <div>
+        <h4>References</h4>
+        <a href="https://playground.tensorflow.org/" target="_blank">TensorFlow Playground →</a>
+        <a href="https://www.youtube.com/watch?v=aircAruvnKk" target="_blank">3Blue1Brown →</a>
+        <a href="https://www.tensorflow.org/" target="_blank">TensorFlow Docs →</a>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <p>Your Name<br>[Course Name]<br>Indiana Wesleyan University</p>
+      </div>
+    </div>
+    <div class="colophon">
+      <span>© 2026 · Portfolio Vol. 02</span>
+      <span>Set in Source Serif 4 & JetBrains Mono</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
