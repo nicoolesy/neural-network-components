@@ -10,9 +10,8 @@
 1. [Introduction](#introduction)
 2. [Network Architecture](#network-architecture)
 3. [The Six Core Components](#the-six-core-components)
-4. [Hands-On Experiments in the Playground](#hands-on-experiments-in-the-playground)
-5. [How It All Works Together](#how-it-all-works-together)
-6. [Summary and Key Insights](#summary-and-key-insights)
+4. [How It All Works Together](#how-it-all-works-together)
+5. [Summary and Key Insights](#summary-and-key-insights)
 
 ---
 
@@ -133,42 +132,6 @@ Common modern optimizers:
 - **RMSprop** — good for recurrent networks
 
 This is the "learning" in machine learning.
-
----
-
-## Hands-On Experiments in the Playground
-
-I ran three experiments to observe how individual components affect training.
-
-### Experiment 1: Depth Solves Complex Patterns
-
-**Setup:** Spiral dataset, Tanh activation, 2 hidden layers (4 neurons + 2 neurons)
-
-![Spiral dataset trained successfully](images/playground-spiral.png)
-
-The spiral dataset is the hardest one in the Playground because the two classes wrap around each other in curves. A single hidden layer cannot separate them — the decision boundary stays too simple. After adding a second hidden layer, the network successfully learned to wrap its boundary around the spiral curves, and the training loss dropped substantially.
-
-**Takeaway:** Depth gives a network the capacity to learn more complex patterns. Each additional layer allows the network to combine features from the previous layer into more abstract representations.
-
-### Experiment 2: Why Activation Functions Matter
-
-**Setup:** Spiral dataset, Linear activation, same architecture as Experiment 1
-
-![Linear activation fails on spiral data](images/playground-linear-fail.png)
-
-When I switched the activation function dropdown from Tanh to Linear, the network failed completely. Even with multiple hidden layers and many neurons, the decision boundary stayed as a straight line — and the training loss plateaued at a high value. This happens because stacking linear functions just produces another linear function: a 100-layer linear network has no more expressive power than a single line.
-
-**Takeaway:** Without non-linearity, depth is meaningless. Non-linear activation functions are what give neural networks their power.
-
-### Experiment 3: Learning Rate and Convergence
-
-**Setup:** Circle dataset, ReLU activation, varying learning rates
-
-![ReLU success](images/playground-relu-success.png)
-
-I trained the same network with different learning rates. At a low learning rate (0.01), training was slow but stable. At a very high learning rate (3.0), the loss oscillated wildly and never converged. At a moderate rate (0.03), training was both fast and stable.
-
-**Takeaway:** The learning rate controls how big each weight adjustment is per step. Too small and training crawls; too large and the optimizer overshoots the minimum. Finding the right learning rate is one of the most important practical decisions in training a neural network.
 
 ---
 
