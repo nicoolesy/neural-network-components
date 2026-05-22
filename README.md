@@ -1,4 +1,5 @@
-# Understanding Neural Networks: A Visual Guide
+# A Visual Field Guide to Neural Networks
+🔗 **Live infographic:** [View it here](https://nicoolesy.github.io/neural-network-components/index.html)
 
 > A hands-on exploration of how neural networks work, built using the TensorFlow Neural Network Playground.
 **Tool:** [TensorFlow Neural Network Playground](https://playground.tensorflow.org/)
